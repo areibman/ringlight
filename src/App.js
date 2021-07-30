@@ -1,7 +1,5 @@
 import "./App.css";
-import burger from "./burger.svg";
-import logo from "./logo.svg";
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Webcam from "react-webcam";
 import Draggable from "react-draggable";
