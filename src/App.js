@@ -37,7 +37,7 @@ const RingOutter = styled.span`
     width: 100%;
     height: 100%;
   }
-  background-color: white;
+  background-color: ${(props) => props.color};
   border-radius: 50%;
   position: absolute;
   z-index: 0;
@@ -86,7 +86,7 @@ const SpotlightRing = styled.span`
 `;
 
 const WhiteBox = styled.span`
-  background-color: white;
+  background-color: ${(props) => props.color};
   height: 100%;
   width: 100%;
   position: absolute;
@@ -109,10 +109,10 @@ const Camera = styled(Webcam)`
   z-index: 3;
 `;
 
-const LightContainer = () => {
+const LightContainer = (props) => {
   return (
     <Fragment>
-      <WhiteBox />
+      <WhiteBox color={props.color} />
       <SpotlightRing />
     </Fragment>
   );
@@ -138,12 +138,17 @@ const DrawerButton = styled.div`
 `;
 
 const App = () => {
-  const [value, setValue] = React.useState("lightplus");
+  const [ringtype, setRingtype] = React.useState("lightplus");
+  const [color, setColor] = React.useState("white");
   const [webcamEnabled, setWebcamEnabled] = React.useState(false);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
+  const handleRingtypeChange = (event) => {
+    setRingtype(event.target.value);
+  };
+
+  const handleColorChange = (event) => {
+    setColor(event.target.value);
   };
 
   const handleSwitch = () => {
@@ -169,8 +174,8 @@ const App = () => {
             <RadioGroup
               aria-label="style"
               name="style1"
-              value={value}
-              onChange={handleChange}
+              value={ringtype}
+              onChange={handleRingtypeChange}
             >
               <FormControlLabel
                 value="lightplus"
@@ -181,6 +186,27 @@ const App = () => {
                 value="classic"
                 control={<Radio />}
                 label="Classic"
+              />
+            </RadioGroup>
+          </FormControl>
+          Mood
+          <FormControl component="fieldset">
+            <FormLabel component="legend"></FormLabel>
+            <RadioGroup
+              aria-label="style"
+              name="style1"
+              value={color}
+              onChange={handleColorChange}
+            >
+              <FormControlLabel
+                value="white"
+                control={<Radio />}
+                label="Lumen"
+              />
+              <FormControlLabel
+                value="#DC7339"
+                control={<Radio />}
+                label="ViyerFire"
               />
             </RadioGroup>
           </FormControl>
@@ -216,11 +242,11 @@ const App = () => {
           </WebcamBox>
         </Draggable>
       )}
-      {value === "lightplus" ? (
-        <LightContainer />
+      {ringtype === "lightplus" ? (
+        <LightContainer color={color} />
       ) : (
         <Fragment>
-          <RingOutter />
+          <RingOutter color={color} />
           <RingInner />
         </Fragment>
       )}
