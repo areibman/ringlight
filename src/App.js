@@ -1,67 +1,50 @@
-import "./App.css";
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import Webcam from "react-webcam";
 import Draggable from "react-draggable";
 import { CoffeeButton } from "./Buymeacoffee";
-import Switch from "@material-ui/core/Switch";
-import Radio from "@material-ui/core/Radio";
+import Switch from "@mui/material/Switch";
+import Radio from "@mui/material/Radio";
 import { Fragment } from "react";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
-import Drawer from "@material-ui/core/Drawer";
-import Button from "@material-ui/core/Button";
-import MenuIcon from "@material-ui/icons/Menu";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import Button from "@mui/material/Button";
+import MenuIcon from "@mui/icons-material/Menu";
+import ClassicLight from "./ClassicLight";
+import Stack from "@mui/material/Stack";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+// import { ThemeProvider, createTheme } from "@mui/core/styles";
 
-const Container = styled.span`
+const colorPallete = {
+  Lumen: { main: "#FFFFFF", contrastText: "#4c4c4c" },
+  "Blue Sky": { main: "#0099FE", contrastText: "#FFFFFF" },
+  "Overcast Daylight ": { main: "#A0E6FE", contrastText: "#4c4c4c" },
+  "Household Light": { main: "#FEFF67", contrastText: "#4c4c4c" },
+  "Early Sunrise": { main: "#FFC900", contrastText: "#4c4c4c" },
+  Tungsten: { main: "#FF9935", contrastText: "#4c4c4c" },
+  "Candle Light": { main: "#FE3400", contrastText: "#4c4c4c" },
+};
+const theme = createTheme({
+  palette: colorPallete,
+});
+// const theme = createTheme({
+//   palette: {
+//     neutral: {
+//       main: "#FE3400",
+//       contrastText: "#fff",
+//     },
+//   },
+// });
+
+const Container = styled.div`
   background-color: black;
   min-height: 100vh;
+  min-width: 100vw;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-`;
-
-const RingOutter = styled.span`
-  width: 50%;
-  &:after {
-    content: "";
-    display: block;
-    padding-bottom: 100%;
-  }
-
-  .content {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-  background-color: ${(props) => props.color};
-  border-radius: 50%;
-  position: absolute;
-  z-index: 0;
-  box-shadow: 2px 2px 10px grey;
-`;
-
-const RingInner = styled.span`
-  width: 40%;
-  &:after {
-    content: "";
-    display: block;
-    padding-bottom: 100%;
-  }
-
-  .content {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-  background-color: black;
-  border-radius: 50%;
-  position: absolute;
-  z-index: 1;
-  box-shadow: 2px 2px 10px grey;
 `;
 
 const SpotlightRing = styled.span`
@@ -109,6 +92,15 @@ const Camera = styled(Webcam)`
   z-index: 3;
 `;
 
+const TipsBox = styled.div`
+  /* visibility: ${(props) => (props.open ? "visible" : "hidden")}; */
+  padding: 0 18px;
+  border: solid 1px;
+  transition: max-height 0.5s ease-out;
+  max-height: ${(props) => (props.open ? "100%" : "0%")};
+  opacity: ${(props) => (props.open ? "1" : "0")};
+`;
+
 const LightContainer = (props) => {
   return (
     <Fragment>
@@ -137,11 +129,28 @@ const DrawerButton = styled.div`
   left: 40px;
 `;
 
+const Drawer = styled.div`
+  width: 20em;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  overflow: auto;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  background-color: white;
+  box-shadow: 2px 2px 10px grey;
+  visibility: ${(props) => (props.open ? "visible" : "hidden")};
+  transition: all 0.5s ease-in-out;
+  opacity: ${(props) => (props.open ? "1" : "0")};
+`;
+
 const App = () => {
   const [ringtype, setRingtype] = React.useState("lightplus");
   const [color, setColor] = React.useState("white");
   const [webcamEnabled, setWebcamEnabled] = React.useState(false);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [tipsOpen, setTipsOpen] = React.useState(false);
 
   const handleRingtypeChange = (event) => {
     setRingtype(event.target.value);
@@ -159,6 +168,10 @@ const App = () => {
     setDrawerOpen(!drawerOpen);
   };
 
+  const resetDrawer = () => {
+    drawerOpen && setDrawerOpen(false);
+  };
+
   useEffect(() => {}, []);
 
   return (
@@ -166,9 +179,10 @@ const App = () => {
       <DrawerButton onClick={toggleMenu}>
         <MenuIcon style={{ color: "gray" }} />
       </DrawerButton>
-      <Drawer anchor={"left"} open={drawerOpen} style={{ maxWidth: "15%" }}>
+      <Drawer open={drawerOpen}>
         <Menu>
-          Ringlight Type
+          <CoffeeButton />
+          <div style={{ margin: "1em 0em" }}>Ringlight Type</div>
           <FormControl component="fieldset">
             <FormLabel component="legend"></FormLabel>
             <RadioGroup
@@ -186,44 +200,59 @@ const App = () => {
                 value="classic"
                 control={<Radio />}
                 label="Classic"
+                sx={{
+                  color: "blue",
+                  "&.Mui-checked": {
+                    color: "blue",
+                  },
+                }}
               />
             </RadioGroup>
           </FormControl>
-          Mood
-          <FormControl component="fieldset">
-            <FormLabel component="legend"></FormLabel>
-            <RadioGroup
-              aria-label="style"
-              name="style1"
-              value={color}
-              onChange={handleColorChange}
-            >
-              <FormControlLabel
-                value="white"
-                control={<Radio />}
-                label="Lumen"
-              />
-              <FormControlLabel
-                value="#DC7339"
-                control={<Radio />}
-                label="ViyerFire"
-              />
-            </RadioGroup>
-          </FormControl>
-          Enable Webcam
+          <div style={{ margin: "1em 0em" }}>Color</div>
+          <ThemeProvider theme={theme}>
+            <Stack spacing={1}>
+              {Object.entries(colorPallete).map((item, ndx) => {
+                return (
+                  <Button
+                    key={ndx}
+                    onClick={() => {
+                      setColor(item[1].main);
+                    }}
+                    color={item[0]}
+                    variant="contained"
+                  >
+                    {item[0]}
+                  </Button>
+                );
+              })}
+            </Stack>
+          </ThemeProvider>
+          <div style={{ margin: "1em 0em" }}>Enable Webcam</div>
           <Switch onChange={handleSwitch} />
-          <p style={{ maxWidth: "15em" }}>
-            Thanks for using Ringlight! Tips:
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setTipsOpen(!tipsOpen);
+            }}
+          >
+            How To Use
+          </Button>
+
+          <TipsBox open={tipsOpen}>
             <ul>
               <li>Maximize your screen's brightness</li>
-              <li>Try to maintain eye contact with your physical Webcam.</li>
               <li>
-                Drag your virtual camera as close as possible to your physical
-                Webcam
+                Keep eye contact with your physical Webcam. This is how you
+                simulate eye contact with your subject.
+              </li>
+              <li>
+                Minimize your virtual camera video and place it as close as
+                possible to your physical Webcam as possible.
               </li>
             </ul>
-          </p>
-          <CoffeeButton />
+          </TipsBox>
+
           <Button
             variant="contained"
             onClick={toggleMenu}
@@ -233,6 +262,7 @@ const App = () => {
           </Button>
         </Menu>
       </Drawer>
+
       {webcamEnabled && (
         <Draggable handle=".handle" position={null} scale={1}>
           <WebcamBox>
@@ -242,14 +272,13 @@ const App = () => {
           </WebcamBox>
         </Draggable>
       )}
-      {ringtype === "lightplus" ? (
-        <LightContainer color={color} />
-      ) : (
-        <Fragment>
-          <RingOutter color={color} />
-          <RingInner />
-        </Fragment>
-      )}
+      <Container onClick={resetDrawer}>
+        {ringtype === "lightplus" ? (
+          <LightContainer color={color} />
+        ) : (
+          <ClassicLight color={color} />
+        )}
+      </Container>
     </Container>
   );
 };
