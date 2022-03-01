@@ -156,10 +156,6 @@ const App = () => {
     setRingtype(event.target.value);
   };
 
-  const handleColorChange = (event) => {
-    setColor(event.target.value);
-  };
-
   const handleSwitch = () => {
     setWebcamEnabled(!webcamEnabled);
   };
@@ -200,12 +196,6 @@ const App = () => {
                 value="classic"
                 control={<Radio />}
                 label="Classic"
-                sx={{
-                  color: "blue",
-                  "&.Mui-checked": {
-                    color: "blue",
-                  },
-                }}
               />
             </RadioGroup>
           </FormControl>
@@ -248,7 +238,7 @@ const App = () => {
               </li>
               <li>
                 Minimize your virtual camera video and place it as close as
-                possible to your physical Webcam as possible.
+                possible to your physical Webcam.
               </li>
             </ul>
           </TipsBox>
